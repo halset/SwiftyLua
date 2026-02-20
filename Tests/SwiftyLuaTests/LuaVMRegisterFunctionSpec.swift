@@ -73,6 +73,47 @@ class LuaVMRegisterFunctionSpec: QuickSpec {
         }
       }
 
+      it("Registers a function with an optional string parameter and accepts nil") {
+        let vm = LuaVM()
+
+        vm.registerFunction(
+          .init(name: "with_optional_string", parameters: [String.optionalArg]) { args in
+            let value = args.removeValue(at: 0)
+
+            if value.kind() == .nil {
+              return .value("fallback")
+            }
+
+            return .value(value as! String)
+          })
+
+        if case VirtualMachine.EvalResults.values(let returnValues) = try vm.execute(string: "return with_optional_string(nil);") {
+          expect(returnValues[0] as? String).to(equal("fallback"))
+        } else {
+          assertionFailure("Unexpected result")
+        }
+
+        if case VirtualMachine.EvalResults.values(let returnValues) = try vm.execute(string: "return with_optional_string('hello');") {
+          expect(returnValues[0] as? String).to(equal("hello"))
+        } else {
+          assertionFailure("Unexpected result")
+        }
+      }
+
+      it("Keeps type checking for optional parameters when value is not nil") {
+        let vm = LuaVM()
+
+        vm.registerFunction(
+          .init(name: "with_optional_string", parameters: [optional(String.arg)]) { args in
+            let value = args.removeValue(at: 0)
+            return .value(value.kind() == .nil ? "fallback" : value as! String)
+          })
+
+        expect {
+          _ = try vm.execute(string: "return with_optional_string(13);")
+        }.to(throwError())
+      }
+
     }
   }
 
