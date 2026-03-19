@@ -14,9 +14,7 @@ let package = Package(
   ],
   dependencies: [
     // Dependencies declare other packages that this package depends on.
-    // .package(url: /* package url */, from: "1.0.0"),
-    //.package(url: "https://github.com/SwiftyLua/lua4swift", from: "1.1.3"),
-    .package(url: "https://github.com/halset/lua4swift", branch: "linux-build"),
+    .package(url: "https://github.com/halset/lua4swift", from: "1.1.4"),
     .package(url: "https://github.com/Quick/Quick", from: "7.6.2"),
     .package(url: "https://github.com/Quick/Nimble", from: "13.7.1")
   ],
